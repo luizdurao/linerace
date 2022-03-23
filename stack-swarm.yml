@@ -1,0 +1,19 @@
+version: "3.7"
+
+services:
+
+    app:
+        image: fleig/bar_race:latest
+        networks:
+            - proxy
+        deploy:
+            labels:
+                - traefik.docker.network=proxy
+                - traefik.frontend.rule=Host:sci70.sysbio.tools
+                - traefik.port=5000
+            placement:
+                constraints: [node.role == manager]
+
+networks:
+    proxy:
+        external: true

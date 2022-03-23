@@ -1,0 +1,172 @@
+{% extends "template.html" %}
+{% block head%}
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/5.0.1/d3.js"></script>
+	<script src="https://d3js.org/d3.v5.min.js" charset="utf-8"></script>
+{% endblock %}
+
+{% block content %}
+<style>
+    body {
+        font-family: sans-serif;
+        font-size: 16px;
+        width: 100%;
+        height: 100%;
+      }
+
+    .legend{
+        color: #ffffff;
+        font-size: 10px;
+    }
+
+    text.title{
+      font: 15px;
+      font-family: Open Sans, sans-serif;
+      font-weight: 550;
+    }
+    text.lineLable{
+        font: 15px;
+        font-family: Open Sans, sans-serif;
+        font-weight: 550;
+      }
+    
+      text.label{
+        font: 20px;
+        font-family: Open Sans, sans-serif;
+        font-style:initial;
+        font-weight: 500;
+      }
+
+    text.yearText{
+        font: 25px;
+        font-family: Open Sans, sans-serif;
+        font-style:initial;
+        font-weight: 700;
+    }  
+    .tick text {
+        font: 17px;
+        fill: #020202;
+      }
+    .tick line {
+         shape-rendering: CrispEdges; 
+        stroke: #d8d8d8;
+      }
+
+    .axis { font: 12px sans-serif; }  
+     .x.axis path{
+      stroke: rgb(150, 150, 150);
+    }
+
+    .y.axis path{
+      stroke: rgb(150, 150, 150);
+    }
+    
+    a{
+      font-size:14px;
+      margin-right:30px;
+        }
+
+    svg {
+        border: 1px solid #e5e5e5;      
+      } 
+    .shadow {
+      -webkit-filter: drop-shadow( 0px 2px 2px rgba(90, 90, 90, 0.2) );
+      filter: drop-shadow( 0px 2px 2px rgba(90,90,90,.1) );
+}
+.row{
+  display: flex;
+  margin-top: 20px;
+  height: 100%;
+  width: 100%;
+
+}
+.coluna{
+  width: 300px;
+  margin: 30px 30px 0 10px;
+  height: 100%;
+  min-width: 300px;
+}
+p{
+  color:gray;
+}
+
+  </style>
+
+		<div class="fill">
+			<div class="container-fluid" style="padding-top:100px;">
+				<div class="row fill">
+					<div class="coluna">
+						<div class="typeContainer">
+							<label>Research Topic 100 (blue color): </label>
+              <form autocomplete="off">
+                <div class="autocomplete" style="width:100%;">
+                  <input id="myInput" type="text" name="myCountry" placeholder="Topic 1">
+                </div>
+              </form>
+						</div>
+						<div class="typeContainer">
+							<label>Research Topic 2 (red color): </label>
+              <form autocomplete="off">
+                <div class="autocomplete" style="width:100%;">
+                  <input id="myInput2" type="text" name="myCountry" placeholder="Topic 2">
+                </div>
+              </form>
+						</div>
+        
+						<div>
+							<h4 class="portfolio-text"> Parameters <span id="dropbut" class="glyphicon glyphicon-plus"></span></h4>
+							<div id="dropparams" class="mb-3" style="display:none;">
+								<div class="container">
+                  <div class="perYearContainer">
+										<label class="checkbox" style="font-size:16px">
+											# Research articles
+											<input id="perYear" type="checkbox" name="perYear" value="perYear">
+											<span class="checkmark"></span>
+										</label>
+									</div>
+									<div class="speedContainer">
+										<label>Speed: &nbsp</label><label id="speedLabel"></label>
+										<input id="speedSlider" type="range" min="1" max="4" value="1" class="slider">
+									</div>
+
+									<div class="StartyearContainer">
+										<label>Year Start: &nbsp</label><label id="startYearLabel"></label>
+										<input id="startYearSlider" type="range" min="1945" max="2020" value="1945" step="1" class="slider">
+									</div>
+									<div class="endYearContainer">
+										<label>Year End: &nbsp</label><label id="endYearLabel"></label>
+										<input id="endYearSlider" type="range" min="1945" max="2021" value="2021" step="1" class="slider">
+									</div>
+								</div>
+							</div>
+						</div>
+						<button id="playButton" type="submit" name="submit" class="btn btn-default btn-sub"><strong>Play</strong></button>
+            <button id="stopButton" type="submit" name="submit" class="btn btn-default btn-sub"><strong>Stop</strong></button>
+            <p class="disclaimer">"The Research trends were calculated dividing the number of research articles associated with one topic in one given year by the total number of research articles published in the same year. For each topic, fractions of all years were z-score normalized and scaled so the minimum value is set to zero."</p>
+          <div style="display:flex;flex-direction: column; justify-content: center;">
+            <a href='https://csbiology.org'><p style="text-align:left"><img src="{{ url_for('static', filename='logo-csbl.svg') }}" style="height:80px;"></p></a>
+            <a href='https://ensino.einstein.br/'><p style="text-align:left"><img src="{{ url_for('static', filename='einstein.png') }}" style="position:relative;left:10px;height:80px;background-color: #005497;"></p></a>
+          </div>
+          </div>
+					<img id='gif' src="/static/loading.gif" style="display:none;text-align: center; ">
+          <div id="divsvg" class="col fill-95" style="display:none; width:100%;">
+						<div id="graph" style=" width:100%;"></div>
+					</div>
+
+				</div>
+
+			</div>
+		</div>
+{% endblock %}
+
+{% block script %}
+		<script src="{{ url_for('static', filename='index.js') }}"></script>
+		<script  src="{{ url_for('static', filename='moving-line-chart-covid-cases-vs-death.js') }}"></script>
+		<script  src="{{ url_for('static', filename='teste.js') }}"></script>
+    <script  src="{{ url_for('static', filename='valores.js') }}"></script>
+    <script>
+      autocomplete(document.getElementById("myInput"), lista);
+      autocomplete(document.getElementById("myInput2"), lista);
+    </script>
+
+  
+{% endblock %}
